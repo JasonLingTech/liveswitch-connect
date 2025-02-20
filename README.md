@@ -1,3 +1,95 @@
+# How To Use Scripts
+
+## Building LiveSwitch Connect Image
+
+There is a Dockerfile available to build an image containing the LiveSwitch Connect application.
+
+The image can be built to point to one of four different LiveSwitch environments dev, femi, staging, prod.
+
+Each one of these environments has an associated `env` file in this directory. To use one of these environments please set the `LS_ENV` environment variable to one of the following.
+
+```shell
+export LS_ENV="dev"
+export LS_ENV="femi"
+export LS_ENV="staging"
+export LS_ENV="prod"
+```
+
+Once the environment variable has been set the image can be built with the following command
+
+```shell
+./build.sh
+```
+
+## Creating a Container from the Image
+
+For ease of use there is a shell script in this directory that will create a container from the image that was built.
+To create the container run the following command
+
+```shell
+./run.sh
+```
+
+This script will now create a container and execute the shell script `run-wrapper.sh` inside the container.
+The `run.sh` script will also take some command line parameters and pass them into the container for the `run-wrapper.sh` script to work with.
+
+```
+-c integer: number of channels to create
+-i integer: number of instances to create
+-r boolean: run a render channel (defaut = false)
+```
+
+### Channels
+
+Each `channel` can have a number of clients connected to it.
+
+### Instances
+
+Each `instance` is also know as a client
+
+### Render
+
+An `instance` sends the video and audio and a `render` is the receiver of the other sent `instance`
+
+For example a Google Meet between two people is one channel with two instances and two render channels.
+
+If no command line arguments are defined when the `run.sh` is executed the container will create one channel with two instances and two render channels.
+
+## Command Line Scripts
+
+The `ls-scripts` directory contains shell scripts for most of the command line actions availabe below.
+
+## Using the Command Line Scripts
+
+The command line scripts can only be used inside the container. To get inside the container and run these scripts please use the following command.
+
+```shell
+docker exec -it liveswitch-connect bash
+```
+
+## Stop Active Channels
+
+To stop the active channels execute the `run-shutdown.sh` script in the `/app` directory inside the container.
+Another method to stop the active channels is to execute this script from outside the container using the following command
+
+```shell
+docker exec -it liveswitch-connect /app/run-shutdown.sh
+```
+
+All other scripts in the `ls-scripts` directory allows you to run some of the ls-connect application. Please see below for an explination of each command.
+
+## Stopping the Container
+
+NOTE: Stopping the container with the following method will create a huge amount of load on the Redis database, and may even crash the gateway and liveswitch server.
+
+To stop the container and force close all the channels and instances execute the following command outside of the container.
+
+```shell
+docker stop liveswitch-connect
+```
+
+The container will stop after a few seconds and return you to the command prompt.
+
 # LiveSwitch Connect CLI
 
 ![build](https://github.com/liveswitch/liveswitch-connect/workflows/build/badge.svg) ![code quality](https://app.codacy.com/project/badge/Grade/bc368b4880724ca2abf34b09ffd87092) ![license](https://img.shields.io/badge/License-MIT-yellow.svg) ![release](https://img.shields.io/github/v/release/liveswitch/liveswitch-connect.svg)
@@ -933,13 +1025,13 @@ Open the [LiveSwitch Demo](https://v1.liveswitch.fm/) in a web browser and join 
 
 Open a terminal and run `lsconnect render` with the following arguments:
 
--   `--gateway-url` <https://v1.liveswitch.fm:8443/sync>
--   `--application-id` my-app-id
--   `--shared-secret` --replaceThisWithYourOwnSharedSecret--
--   `--audio-pipe` my-audio-pipe
--   `--video-pipe` my-video-pipe
--   `--channel-id` (the channel ID from your web browser)
--   `--connection-id` (the connection ID from your web browser)
+- `--gateway-url` <https://v1.liveswitch.fm:8443/sync>
+- `--application-id` my-app-id
+- `--shared-secret` --replaceThisWithYourOwnSharedSecret--
+- `--audio-pipe` my-audio-pipe
+- `--video-pipe` my-video-pipe
+- `--channel-id` (the channel ID from your web browser)
+- `--connection-id` (the connection ID from your web browser)
 
 ```shell
 lsconnect render --gateway-url https://v1.liveswitch.fm:8443/sync --application-id my-app-id --shared-secret=--replaceThisWithYourOwnSharedSecret-- --audio-pipe my-audio-pipe --video-pipe my-video-pipe --channel-id {CHANNEL_ID} --connection-id {CONNECTION_ID}
@@ -960,12 +1052,12 @@ Either of these will result in a graceful disconnection from LiveSwitch.
 
 Open a new terminal and run `lsconnect capture` in a new console tab with the following arguments:
 
--   `--gateway-url` <https://v1.liveswitch.fm:8443/sync>
--   `--application-id` my-app-id
--   `--shared-secret` --replaceThisWithYourOwnSharedSecret--
--   `--audio-pipe` my-audio-pipe
--   `--video-pipe` my-video-pipe
--   `--channel-id` (the channel ID from your web browser)
+- `--gateway-url` <https://v1.liveswitch.fm:8443/sync>
+- `--application-id` my-app-id
+- `--shared-secret` --replaceThisWithYourOwnSharedSecret--
+- `--audio-pipe` my-audio-pipe
+- `--video-pipe` my-video-pipe
+- `--channel-id` (the channel ID from your web browser)
 
 ```shell
 lsconnect capture --gateway-url https://v1.liveswitch.fm:8443/sync --application-id my-app-id --shared-secret=--replaceThisWithYourOwnSharedSecret-- --audio-pipe my-audio-pipe --video-pipe my-video-pipe --channel-id {CHANNEL_ID}

@@ -7,7 +7,7 @@ LS_CONNECTION_ID=$3
  --gateway-url "${ENV_LS_MEDIA_GATEWAY_URL}" \
  --shared-secret "${ENV_LS_MEDIA_GATEWAY_SECRET}" \
  --application-id "${ENV_LS_APPLICATION_ID}" \
- --channel-id "myStream-${channel}" \
+ --channel-id "myChannel-${channel}" \
  --connection-id "${LS_CONNECTION_ID}" \
  --audio-pipe my-audio-pipe \
  --video-pipe my-video-pipe \

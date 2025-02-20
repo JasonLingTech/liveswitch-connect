@@ -5,22 +5,21 @@ running=0
 while [ ${running} -eq 0 ]
 do
 
-  ps -eaf | grep "lsconnect" | head -1 | awk '{print $2}' 1>/dev/null 2>&1
-  running=$?
-  if [ ${running} -gt 0 ];then
-    # exit no more instances running
-    echo "..... end"
-    exit 1
+  LS_PID=`ps -eaf | grep "lsconnect" | grep -v "grep" | head -1 | awk '{print $2}'`
 
+  if [ -z ${LS_PID} ];then # exit no more instances running
+    running=1
   else
     LS_PID=`ps -eaf | grep "lsconnect" | head -1 | awk '{print $2}'`
-    echo "shutting down [ PID = ${LS_PID} ]"
 
-    # look at email could use a curl call here ....
-
-    kill -9 ${LS_PID}
+    if [ ${LS_PID} -gt 0 ];then
+      echo "shutting down [ PID = ${LS_PID} ]"
+      kill -9 ${LS_PID} # look at email could use a curl call here ....
+    else
+      running=1
+    fi
+  sleep 2
   fi
-  sleep 5
 done
 
 echo "shutdown complete"
